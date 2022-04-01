@@ -11,10 +11,8 @@ library(caret)
 setwd("C://Users//USER//Desktop//최종")
 select <- dplyr::select
 
-load('[MOCEH]data_formation2_kej.RData')
+load('data_formation.RData')
 
-######dat[[i]] : i=1 control, i=2 prenatal~6m, i=3 birth to 1y, i=4 birth to 2y##########
-# preganacy, 6m 631명
 dat <- Data[[1]]
 exp <- dat %>% dplyr::select(pm10_1T.u:pm25_6m.u)
 
