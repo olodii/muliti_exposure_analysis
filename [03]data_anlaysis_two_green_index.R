@@ -19,7 +19,6 @@ load('data_formation_fin.RData')
 # >>> {BMKR*1000, mediation*1000}*1000회 반복
 
 #-------------------------------------------------------------------------------------------------------------------------#
-# Prenatal period: 631명 D1~D5
 pre <- NULL
 pre[[1]] <- D1
 pre[[2]] <- D2
@@ -109,12 +108,12 @@ for (m in 1:length(pre)){
     model.m2<-lm(mixture~green234_10000+temp+humi,data=df)
     
     # X -> Y
-    model.y1<-lm(MDI~lngreen+mixture+temp+humi+d_ma_age+mbmi+d_ga_wks+d_b_wt+edu_university+shs+sex,data=df)
-    model.y2<-lm(MDI~green234_10000+mixture+temp+humi+d_ma_age+mbmi+d_ga_wks+d_b_wt+edu_university+shs+sex,data=df)
+    model.y1<-lm(MDI~green+mixture+temp+humi+age+mbi+wks+dbwt+medu+shs+sex,data=df)
+    model.y2<-lm(MDI~green2+mixture+temp+humi+age+mbi+wks+dbwt+medu+shs+sex,data=df)
     
     # causal mediation
-    outcome1 <- mediate(model.m1, model.y1, sims=1000, boot=TRUE, treat="lngreen", mediator="mixture")
-    outcome2 <- mediate(model.m2, model.y2, sims=1000, boot=TRUE, treat="green234_10000", mediator="mixture")
+    outcome1 <- mediate(model.m1, model.y1, sims=1000, boot=TRUE, treat="green", mediator="mixture")
+    outcome2 <- mediate(model.m2, model.y2, sims=1000, boot=TRUE, treat="green2", mediator="mixture")
     
     #summary(outcome)
     rs1 <- t(data.frame(summary(outcome1)$d.avg,
@@ -139,7 +138,7 @@ for (m in 1:length(pre)){
     rownames(rs2) <- c('cme','cme.se','de','de.se','tt','tt.se','pp','pp.se')
     
     res <- data.frame(cbind(rs1, rs2))
-    colnames(res) <- c('lng200m','g10km')
+    colnames(res) <- c('200m','300m')
     
     cme[[k]] <- res 
     pip[[k]] <- ps
@@ -243,10 +242,10 @@ for (m in 1:length(pre)){
   message2 <-paste('lngreen 200m: There is no mediation effect in', paste('pre',period,sep='_'), sep=' ')
   ifelse((avg.cme['tt','sig'] == '*') & (avg.cme['cme','sig'] == '*'), message, message2)
 
-  # green234 10000m buffer
-  avg.cme2 <- data.frame(round(apply(cmes[,colnames(cmes)=='g10km'],1,mean),3),
-                         round(apply(cmes[,colnames(cmes)=='g10km'],1,quantile, probs=0.025),3),
-                         round(apply(cmes[,colnames(cmes)=='g10km'],1,quantile, probs=0.975),3))
+  # 300m buffer
+  avg.cme2 <- data.frame(round(apply(cmes[,colnames(cmes)=='300m'],1,mean),3),
+                         round(apply(cmes[,colnames(cmes)=='300m'],1,quantile, probs=0.025),3),
+                         round(apply(cmes[,colnames(cmes)=='300m'],1,quantile, probs=0.975),3))
   
   avg.cme2$sig <- ifelse(avg.cme2[,2]<0 & avg.cme2[,3]>0, '', '*')
   
