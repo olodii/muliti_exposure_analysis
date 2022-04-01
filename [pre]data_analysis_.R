@@ -8,12 +8,10 @@ library(gam);library(mediation)
 library(readxl);library(mgcv);library(dplyr)
 library(caret)
 
-#setwd("C://Users//EJ//Desktop//ewha")
-#setwd("\Users\olodi\Downloads")
-setwd("C://Users//USER//Desktop//kej//univ//2020-2학기 연구//분석//나//결과//최종//추가분석")
+setwd("C://Users//USER//Desktop//최종")
 select <- dplyr::select
 
-load('[MOCEH]data_formation_fin_kej.RData')
+load('data_formation_fin.RData')
 #-------------------------------------------------------------------------------------------------------------------------#
 
 # split train set:test set =1:1 >>> 1000회 반복.
