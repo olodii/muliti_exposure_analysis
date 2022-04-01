@@ -11,7 +11,7 @@ library(caret)
 setwd("C://Users//USER//Desktop//최종")
 select <- dplyr::select
 
-load('data_formation_fin.RData')
+load('data_formation.RData')
 #-------------------------------------------------------------------------------------------------------------------------#
 
 # split train set:test set =1:1 >>> 1000회 반복.
@@ -54,7 +54,7 @@ for (m in 1:length(pre)){
   for (k in 1:1000){
     
     # split train/test -> 이 과정이 1000번 반복되면서 다른 결과 산출
-    rn <- createDataPartition(y = data$lngreen, p = 0.5, list = F)   # row 색인을 위해 list = F 로 설정
+    rn <- createDataPartition(y = data$green, p = 0.5, list = F)   # row 색인을 위해 list = F 로 설정
     
     train <- data[rn,] # 50%의 train data (랜덤 샘플링된 행 번호를 색인)
     test <- data[-rn,] # 나머지 50%의 test data
@@ -62,7 +62,7 @@ for (m in 1:length(pre)){
     #동일한 exp, cov, out 개수와 순서
     Z_train <- train[, 3:5] # exposures
     X_train <- train[, 6:14] # covariates
-    y_train <- train[, 1] # MDI
+    y_train <- train[, 1] 
     
     # 1. BKMR
     # training
@@ -101,11 +101,11 @@ for (m in 1:length(pre)){
     h_hat[[k]] <- mixture
     
     #2. Causal mediation
-    df <- cbind(y_test,mixture,X_test,test %>% select(lngreen,green234_10000))
+    df <- cbind(y_test,mixture,X_test,test %>% select(green,green2))
     
     # X -> M
-    model.m1<-lm(mixture~lngreen+temp+humi,data=df)
-    model.m2<-lm(mixture~green234_10000+temp+humi,data=df)
+    model.m1<-lm(mixture~green+temp+humi,data=df)
+    model.m2<-lm(mixture~green2+temp+humi,data=df)
     
     # X -> Y
     model.y1<-lm(MDI~green+mixture+temp+humi+age+mbi+wks+dbwt+medu+shs+sex,data=df)
@@ -238,8 +238,8 @@ for (m in 1:length(pre)){
                          'sig',
                          paste('cme',period, sep='_'))
  
-  message <- paste('lngreen 200m: There is significant mediation effect in', paste('pre',period,sep='_'), sep=' ')
-  message2 <-paste('lngreen 200m: There is no mediation effect in', paste('pre',period,sep='_'), sep=' ')
+  message <- paste('green 200m: There is significant mediation effect in', paste('pre',period,sep='_'), sep=' ')
+  message2 <-paste('green 200m: There is no mediation effect in', paste('pre',period,sep='_'), sep=' ')
   ifelse((avg.cme['tt','sig'] == '*') & (avg.cme['cme','sig'] == '*'), message, message2)
 
   # 300m buffer
@@ -259,8 +259,8 @@ for (m in 1:length(pre)){
                           'sig',
                           paste('cme',period,sep='_'))
   
-  message <- paste('green 10km: There is significant mediation effect in', paste('pre',period,sep='_'), sep=' ')
-  message2 <-paste('green 10km: There is no mediation effect in', paste('pre',period,sep='_'), sep=' ')
+  message <- paste('green 300m: There is significant mediation effect in', paste('pre',period,sep='_'), sep=' ')
+  message2 <-paste('green 300m: There is no mediation effect in', paste('pre',period,sep='_'), sep=' ')
   ifelse((avg.cme2['tt','sig'] == '*') & (avg.cme2['cme','sig'] == '*'), message, message2)
   
   # final results
