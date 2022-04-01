@@ -45,7 +45,7 @@ lee.data$b_day  =day(lee.data$dob)
 #Season variable (Winter vs other season)
 lee.data$season=factor(ifelse(lee.data$b_month==12 | lee.data$b_month<=2,0,1))
 
-bout<-read_excel("..//data/measurement.xlsx",sheet=6) %>% dplyr:: select(id,d_del_ty,d_del_date_y:d_ga_d)
+bout<-read_excel("..//data/measurement.xlsx",sheet=6) %>% dplyr:: select(id,ty,date_y:d)
 
 names(bout)[1]="ID"
 
@@ -55,7 +55,7 @@ exam1<-merge(exam1,bout,by="ID",all.x=T)
 
 exam1$b.date <- ymd(paste0(exam1$d_del_date_y,'-',exam1$d_del_date_m, '-', exam1$d_del_date_d))
 str(exam1$d_ga_wks)
-exam1$p.days <- as.numeric(exam1$d_ga_wks)*7 + exam1$d_ga_d
+exam1$p.days <- as.numeric(exam1$wks)*7 + exam1$d
 
 
 exam1$p.date <- exam1$b.date - days(exam1$p.days)
@@ -97,9 +97,9 @@ sum(is.na(lee.data$yc2))
 sum(is.na(exam1$p.date))
 exam1.r <- exam1[!is.na(exam1$p.date),]
 
-M1 <- m4[!is.na(m4$bayley_6m_date),];nrow(M1)
-M2 <- m4[!is.na(m4$bayley_1y_date),];nrow(M2)
-M3 <- m4[!is.na(m4$bayley_2y_date),];nrow(M3)
+M1 <- m4[!is.na(m4$date1),];nrow(M1)
+M2 <- m4[!is.na(m4$date2),];nrow(M2)
+M3 <- m4[!is.na(m4$date3),];nrow(M3)
 
 m_id1<-merge(M1,M2,by="id",all.x=T)
 m_id2<-merge(m_id1,M3,by="id",all.x=T)
@@ -117,7 +117,7 @@ meteo.list=NULL
 for(i in 1:nrow(m_id4)){
   s<-subset(m_id4,id==m_id4$id[i])
   df<-data.frame(id=s$id,
-                 date=seq(s$p.date,s$bayley_6m_date,1),
+                 date=seq(s$p.date,s$date1,1),
                  areacode=s$arecode,
                  sggcode =s$code)
   df$key=paste0(df$date,"-",df$areacode)
@@ -127,7 +127,7 @@ for(i in 1:nrow(m_id4)){
   df$T3  =ifelse(df$date>=s$p3.date & df$date<s$b.date,1,0)
   df$preg=ifelse(df$date<s$b.date,1,0) 
   
-  df$m6 = ifelse(df$date>=s$b.date & df$date<s$bayley_6m_date,1,0)
+  df$m6 = ifelse(df$date>=s$b.date & df$date<s$date1,1,0)
   
   df2<-merge(df ,meteo,by="key",all.x=T)
   df2$SIGUNGU_DATE=with(df2,paste0(ddate,"-",sggcode))
@@ -150,7 +150,7 @@ meteo.df1<-do.call(rbind,meteo.list)
 
 exam2<-merge(exam1,meteo.df1 %>% dplyr::select(id,mtemp_1T:mhumi_6m),by.x="ID",by.y="id",all.x=T)
 
-mdu<-read_excel("..//data//questionnaire.xlsx",sheet=1) %>% dplyr::select(id, m_ma_edu)
+mdu<-read_excel("..//data//questionnaire.xlsx",sheet=1) %>% dplyr::select(id, medu)
 sum(is.na(mdu))
 exam2 <- merge(exam2, mdu, by.x="ID", by.y="id", all.x=T)
 
