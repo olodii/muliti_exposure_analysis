@@ -200,7 +200,7 @@ for (m in 1:length(pre)){
                              '0.75_pm10','0.75_no2','0.75_pm25','0.75_temp','0.75_humi')
   
   print(paste('In SingVarRiskSummaries, there is',
-              length(subset(avg.risks.s, sig =='*')),
+              nrow(subset(avg.risks.s, sig =='*')),
               'significant association in the results.', sep=" "))
   
   #print(avg.risks.s[,1:4])
@@ -225,7 +225,7 @@ for (m in 1:length(pre)){
   rownames(avg.risks.o) <- seq(from=0.10, to=0.90, by=0.05)
   
   print(paste('In OverallRiskSummaries, there is',
-              length(subset(avg.risks.o, sig =='*')),
+              nrow(subset(avg.risks.o, sig =='*')),
               'significant association in the results.', sep=" "))
   
   print(avg.risks.o[,1:4])
